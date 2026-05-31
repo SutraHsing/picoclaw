@@ -26,6 +26,36 @@ picoclaw cron add --name "Daily summary" --message "Summarize today's logs" --cr
 picoclaw cron add --name "Ping" --message "heartbeat" --every 300 --deliver
 ```
 
+## Agent Tool Actions
+
+The agent-facing `cron` tool supports these actions:
+
+- `add`: create a new job.
+- `list`: show job names, ids, and schedules.
+- `get`: fetch one full persisted job by `job_id`, including its saved payload.
+- `update`: partially update one job by `job_id`; omitted fields are preserved.
+- `remove`, `enable`, `disable`: existing management actions.
+
+When rescheduling an existing task, use `list -> get -> update`. Do not use
+`remove -> add` just to change the schedule, because recreating a job can drop
+the original prompt, delivery target, or command payload.
+
+Example tool calls:
+
+```json
+{"action":"get","job_id":"79095b2f5685a0f2"}
+```
+
+```json
+{"action":"update","job_id":"79095b2f5685a0f2","cron_expr":"30 10 * * *"}
+```
+
+`update` accepts `name`, `message`, `command`, and exactly one schedule field
+(`at_seconds`, `every_seconds`, or `cron_expr`).
+Omit `command` to preserve it, set `command` to a non-empty string to replace
+it, or set `command` to `""` to clear it. Command updates require the same
+internal channel and confirmation gates as command creation.
+
 ## Execution Modes
 
 Jobs are stored with a message payload and can execute in three stable user-facing modes:
