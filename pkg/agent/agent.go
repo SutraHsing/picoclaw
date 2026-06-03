@@ -58,6 +58,7 @@ type AgentLoop struct {
 	evolution      *evolutionBridge
 	hookRuntime    hookRuntime
 	steering       *steeringQueue
+	dailyMemory    *DailyMemoryRecorder
 	pendingSkills  sync.Map
 	pendingStops   sync.Map
 	mu             sync.RWMutex

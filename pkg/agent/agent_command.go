@@ -333,6 +333,11 @@ func (al *AgentLoop) buildCommandsRuntime(
 			if opts == nil {
 				return fmt.Errorf("process options not available")
 			}
+			if al.dailyMemory != nil {
+				if err := al.dailyMemory.FlushSession(ctx, agent, opts.SessionKey, "clear"); err != nil {
+					logDailyMemoryFlushError("clear", err)
+				}
+			}
 			return al.contextManager.Clear(ctx, opts.SessionKey)
 		}
 
